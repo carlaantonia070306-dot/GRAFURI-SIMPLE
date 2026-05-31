@@ -1,0 +1,107 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+
+int inserare_nod_in_stiva(int stiva[100], int n, int vf)
+{
+    int i;
+
+    for (i = n - 1; i >= 0; i--)
+        stiva[i + 1] = stiva[i];
+
+    stiva[0] = vf;
+    n++;
+
+    return n;
+}
+
+int stergere_nod_din_stiva(int stiva[100], int n)
+{
+    int i;
+
+    for (i = 0; i < n - 1; i++)
+        stiva[i] = stiva[i + 1];
+
+    n--;
+
+    return n;
+}
+
+int citeste_stiva(int stiva[100], int n)
+{
+    return stiva[0];
+}
+
+void parcurgere_in_adancime(int v0, int a[100][100], int n)
+{
+    int stiva[100], vizitat[100];
+    int i, nr_c, gasit;
+
+    for (i = 0; i < n; i++)
+        vizitat[i] = 0;
+
+    nr_c = 0;
+
+    nr_c = inserare_nod_in_stiva(stiva, nr_c, v0);
+    vizitat[v0] = 1;
+
+    printf("\n%d", v0 + 1);
+
+    while (nr_c)
+    {
+        i = citeste_stiva(stiva, nr_c);
+        gasit = 0;
+
+        for (int k = 0; k < n && gasit == 0; k++)
+        {
+            if (a[i][k] == 1 && vizitat[k] == 0)
+            {
+                nr_c = inserare_nod_in_stiva(stiva, nr_c, k);
+                vizitat[k] = 1;
+
+                printf("\n%d", k + 1);
+
+                gasit = 1;
+            }
+        }
+
+        if (gasit == 0)
+            nr_c = stergere_nod_din_stiva(stiva, nr_c);
+    }
+}
+
+int main()
+{
+    int n, v0, a[100][100], m, i, j, vf1, vf2;
+
+    printf("Introduceti numarul de varfuri: ");
+    scanf("%d", &n);
+
+    for (i = 0; i < n; i++)
+        for (j = 0; j < n; j++)
+            a[i][j] = 0;
+
+    printf("Introduceti numarul de muchii: ");
+    scanf("%d", &m);
+
+    for (i = 0; i < m; i++)
+    {
+        printf("Introduceti muchiile:\n");
+
+        for (i = 0; i < m; i++)
+        {
+            scanf("%d %d", &vf1, &vf2);
+
+            a[vf1 - 1][vf2 - 1] = 1;
+            a[vf2 - 1][vf1 - 1] = 1;
+        }
+    }
+
+    printf("\nIntroduceti nodul initial pentru parcurgerea DF: ");
+    scanf("%d", &v0);
+
+    printf("\nOrdinea de vizitare a varfurilor grafului este:");
+
+    parcurgere_in_adancime(v0 - 1, a, n);
+
+    return 0;
+}
