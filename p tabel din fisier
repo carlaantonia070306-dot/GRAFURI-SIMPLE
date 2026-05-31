@@ -1,0 +1,51 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+
+// citire graf ponderat
+int citire_graf(char numefisier[], int* nr_vrf, int* nr_muchii, int g[100][3])
+{
+    FILE* f;
+
+    f = fopen(numefisier, "r");
+    if (f == NULL)
+        return 0;
+
+    fscanf(f, "%d %d", nr_vrf, nr_muchii);
+
+    for (int i = 0; i < *nr_muchii; i++)
+        fscanf(f, "%d %d %d", &g[i][0], &g[i][1], &g[i][2]);
+
+    fclose(f);
+    return 1;
+}
+
+int main()
+{
+    char numefisier[20];
+    int n, m, tabel[100][3], er;
+    int i;
+
+    printf("Introduceti fisierul din care cititi graful: ");
+    scanf("%s", numefisier);
+
+    er = citire_graf(numefisier, &n, &m, tabel);
+
+    if (er == 0)
+    {
+        printf("Eroare la deschiderea fisierului!\n");
+        return 0;
+    }
+
+    printf("\nNumarul de varfuri este: %d\n", n);
+    printf("Numarul de muchii este: %d\n", m);
+
+    printf("Muchiile sunt:\n");
+
+    for (i = 0; i < m; i++)
+    {
+        printf("%d %d ", tabel[i][0], tabel[i][1]);
+        printf("Ponderea muchiei este: %d\n", tabel[i][2]);
+    }
+
+    return 1;
+}
