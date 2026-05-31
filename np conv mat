@@ -1,0 +1,71 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+
+int citire_graf(char numefisier[], int* nr_vrf, int* nr_muchii, int tabel[100][2])
+{
+    FILE* f;
+
+    f = fopen(numefisier, "r");
+    if (f == NULL)
+        return 1;
+
+    fscanf(f, "%d %d", nr_vrf, nr_muchii);
+
+    for (int i = 0; i < *nr_muchii; i++)
+        fscanf(f, "%d %d", &tabel[i][0], &tabel[i][1]);
+
+    fclose(f);
+    return 0;
+}
+
+void conversie_matrice(int nr_vrf, int nr_muchii, int tabel[100][2], int mat[100][100])
+{
+    for (int i = 0; i < nr_vrf; i++)
+        for (int j = 0; j < nr_vrf; j++)
+            mat[i][j] = 0;
+
+    for (int i = 0; i < nr_muchii; i++)
+    {
+        mat[tabel[i][0] - 1][tabel[i][1] - 1] = 1;
+        mat[tabel[i][1] - 1][tabel[i][0] - 1] = 1;
+    }
+}
+
+int main()
+{
+    char numefisier[20];
+    int n, m, er;
+    int tabel[100][2];
+    int a[100][100];
+
+    printf("Introduceti fisierul din care cititi graful: ");
+    scanf("%s", numefisier);
+
+    er = citire_graf(numefisier, &n, &m, tabel);
+
+    if (er != 0)
+    {
+        printf("Eroare la deschiderea fisierului!\n");
+        return 1;
+    }
+
+    printf("Numarul de varfuri este: %d\n", n);
+    printf("Numarul de muchii este: %d\n", m);
+
+    printf("Muchiile sunt:\n");
+    for (int i = 0; i < m; i++)
+        printf("%d %d\n", tabel[i][0], tabel[i][1]);
+
+    conversie_matrice(n, m, tabel, a);
+
+    printf("\nMatricea de adiacenta este:\n");
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < n; j++)
+            printf("%d ", a[i][j]);
+
+        printf("\n");
+    }
+
+    return 0;
+}
