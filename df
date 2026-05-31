@@ -1,107 +1,55 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 
-int inserare_nod_in_stiva(int stiva[100], int n, int vf)
+void DF(int v, int a[100][100], int vizitat[100], int n) //v-vf in care ma aflu, a-mat adiacenta, vizitat- vec care tine minte unde am fost, n-nr vf
 {
-    int i;
+    vizitat[v] = 1; //marchez vf ca vizitat
 
-    for (i = n - 1; i >= 0; i--)
-        stiva[i + 1] = stiva[i];
+    printf("%d ", v + 1);
 
-    stiva[0] = vf;
-    n++;
-
-    return n;
-}
-
-int stergere_nod_din_stiva(int stiva[100], int n)
-{
-    int i;
-
-    for (i = 0; i < n - 1; i++)
-        stiva[i] = stiva[i + 1];
-
-    n--;
-
-    return n;
-}
-
-int citeste_stiva(int stiva[100], int n)
-{
-    return stiva[0];
-}
-
-void parcurgere_in_adancime(int v0, int a[100][100], int n)
-{
-    int stiva[100], vizitat[100];
-    int i, nr_c, gasit;
-
-    for (i = 0; i < n; i++)
-        vizitat[i] = 0;
-
-    nr_c = 0;
-
-    nr_c = inserare_nod_in_stiva(stiva, nr_c, v0);
-    vizitat[v0] = 1;
-
-    printf("\n%d", v0 + 1);
-
-    while (nr_c)
-    {
-        i = citeste_stiva(stiva, nr_c);
-        gasit = 0;
-
-        for (int k = 0; k < n && gasit == 0; k++)
-        {
-            if (a[i][k] == 1 && vizitat[k] == 0)
-            {
-                nr_c = inserare_nod_in_stiva(stiva, nr_c, k);
-                vizitat[k] = 1;
-
-                printf("\n%d", k + 1);
-
-                gasit = 1;
-            }
-        }
-
-        if (gasit == 0)
-            nr_c = stergere_nod_din_stiva(stiva, nr_c);
-    }
+    for (int i = 0; i < n; i++)
+        if (a[v][i] == 1 && vizitat[i] == 0) //daca exista muchie si nu am fost inca acolo
+            DF(i, a, vizitat, n);
 }
 
 int main()
 {
-    int n, v0, a[100][100], m, i, j, vf1, vf2;
+    int n, m;
+    int a[100][100];
+    int vizitat[100];
+    int vf1, vf2;
+    int v0;
 
-    printf("Introduceti numarul de varfuri: ");
+    printf("Numar varfuri: ");
     scanf("%d", &n);
 
-    for (i = 0; i < n; i++)
-        for (j = 0; j < n; j++)
-            a[i][j] = 0;
-
-    printf("Introduceti numarul de muchii: ");
-    scanf("%d", &m);
-
-    for (i = 0; i < m; i++)
+    for (int i = 0; i < n; i++)
     {
-        printf("Introduceti muchiile:\n");
+        vizitat[i] = 0;
 
-        for (i = 0; i < m; i++)
-        {
-            scanf("%d %d", &vf1, &vf2);
-
-            a[vf1 - 1][vf2 - 1] = 1;
-            a[vf2 - 1][vf1 - 1] = 1;
-        }
+        for (int j = 0; j < n; j++)
+            a[i][j] = 0;
     }
 
-    printf("\nIntroduceti nodul initial pentru parcurgerea DF: ");
+    printf("Numar muchii: ");
+    scanf("%d", &m);
+
+    printf("Introduceti muchiile:\n");
+
+    for (int i = 0; i < m; i++)
+    {
+        scanf("%d %d", &vf1, &vf2);
+
+        a[vf1 - 1][vf2 - 1] = 1;
+        a[vf2 - 1][vf1 - 1] = 1;
+    }
+
+    printf("Nod start: ");
     scanf("%d", &v0);
 
-    printf("\nOrdinea de vizitare a varfurilor grafului este:");
+    printf("Parcurgere DF:\n");
 
-    parcurgere_in_adancime(v0 - 1, a, n);
+    DF(v0 - 1, a, vizitat, n);
 
     return 0;
 }
