@@ -1,0 +1,95 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+
+int citire_graf(char numefisier[], int* nr_vrf, int* nr_muchii, int g[100][2])
+{
+    FILE* f;
+
+    f = fopen(numefisier, "r");
+    if (f == NULL)
+        return 1;
+
+    fscanf(f, "%d %d", nr_vrf, nr_muchii);
+
+    for (int i = 0; i < *nr_muchii; i++)
+        fscanf(f, "%d %d", &g[i][0], &g[i][1]);
+
+    fclose(f);
+    return 0;
+}
+
+void construire_matrice_adiacenta(int nr_vrf, int nr_muchii, int g[100][2], int a[100][100])
+{
+    for (int i = 0; i < nr_vrf; i++)
+        for (int j = 0; j < nr_vrf; j++)
+            a[i][j] = 0;
+
+    for (int i = 0; i < nr_muchii; i++)
+    {
+        a[g[i][0] - 1][g[i][1] - 1] = 1;
+        a[g[i][1] - 1][g[i][0] - 1] = 1;
+    }
+}
+
+void matrice_drumuri(int nr_vrf, int a[100][100], int d[100][100])
+{
+    for (int i = 0; i < nr_vrf; i++)
+        for (int j = 0; j < nr_vrf; j++)
+            d[i][j] = a[i][j];
+
+    for (int i = 0; i < nr_vrf; i++)
+        d[i][i] = 1; // pune 1 pe diagonala
+
+    for (int k = 0; k < nr_vrf; k++)
+        for (int i = 0; i < nr_vrf; i++)
+            for (int j = 0; j < nr_vrf; j++)
+                if (d[i][j] == 0 && d[i][k] == 1 && d[k][j] == 1)
+                    d[i][j] = 1; // Dacă nu știam că există drum între i și j, 
+    //dar pot merge din i în k și din k în j, atunci există drum între i și j.
+}
+
+int este_conex(int nr_vrf, int d[100][100])
+{
+    for (int i = 0; i < nr_vrf; i++)
+        for (int j = 0; j < nr_vrf; j++)
+            if (d[i][j] == 0)
+                return 0;
+
+    return 1;
+}
+
+int main()
+{
+    char numefisier[20];
+    int n, m, tabel[100][2], er;
+    int a[100][100], d[100][100];
+
+    printf("Introduceti fisierul din care cititi graful: ");
+    scanf("%s", numefisier);
+
+    er = citire_graf(numefisier, &n, &m, tabel);
+
+    if (er == 1)
+    {
+        printf("Eroare la deschiderea fisierului!\n");
+        return 0;
+    }
+
+    construire_matrice_adiacenta(n, m, tabel, a);
+    matrice_drumuri(n, a, d);
+
+    printf("\nMatricea existentei drumurilor este:\n");
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < n; j++)
+            printf("%d ", d[i][j]);
+        printf("\n");
+    }
+
+    if (este_conex(n, d) == 1)
+        printf("\nGraful este conex.\n");
+    else
+        printf("\nGraful NU este conex.\n");
+
+    return 0;
+}
