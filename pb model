@@ -1,0 +1,68 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+
+int citire(char numefisier[], int* n, int a[][100])
+{
+	FILE* f;
+	f = fopen(numefisier, "r");
+	if (f == NULL)
+		return 0;
+
+	fscanf(f, "%d", n);
+
+	for (int i = 0; i < *n; i++)
+		
+		for (int j = 0; j < *n; j ++)
+			fscanf(f, "%d", &a[i][j]);
+
+	fclose(f);
+	return 1;
+
+}
+
+int verificare(int a[][100], int n)
+{
+	for (int i = 0; i < n; i++)
+	{
+		if (a[i][i] != 0) {
+			printf("diagonala principala nu este nula!");
+			return 0; }
+
+		for (int j = 0; j < n; j++) {
+			if (a[i][j] != a[j][i])
+				printf("matricea nu este simetrica!");
+			return 0;
+		}
+
+	}
+}
+
+int main()
+{
+	int a[100][100], n, er;
+	char numefisier[20];
+
+	printf("introduceti numele fisierului");
+	scanf("%s", numefisier);
+
+	er = citire(numefisier, &n, a);
+	if (er == 0) 
+		printf("eroare la deschiderea fisierului!");
+
+	printf("Matricea citita este:\n");
+
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < n; j++)
+			printf("%d ", a[i][j]);
+
+		printf("\n");
+	}
+
+	if (verificare(a, n) == 1)
+		printf("\nDA - matricea poate fi matrice de adiacenta a unui graf neorientat.\n");
+	else
+		printf("\nNU - matricea nu poate fi matrice de adiacenta a unui graf neorientat.\n");
+
+	return 0;
+}
